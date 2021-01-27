@@ -27,4 +27,4 @@ getwd()
 ddt <- read.csv("DDT.csv")
 head(ddt)
 ```
-
+## Task 3
