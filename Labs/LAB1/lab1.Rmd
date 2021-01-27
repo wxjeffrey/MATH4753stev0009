@@ -28,3 +28,24 @@ ddt <- read.csv("DDT.csv")
 head(ddt)
 ```
 ## Task 3
+```{r}
+ddt <- read.csv("DDT.csv")
+names(ddt)
+```
+a. Qualitative Variables: River, Species
+b. Quantitative Variables: Mile, Length, Weight, DDT
+
+```{r}
+ddt<- read.csv("DDT.csv")
+summary(ddt)
+```
+c. Number of species in DDT dataset: 
+
+
+
+
+
+
+
+
+
