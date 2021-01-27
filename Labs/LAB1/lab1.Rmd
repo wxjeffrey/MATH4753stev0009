@@ -38,8 +38,21 @@ b. Quantitative Variables: Mile, Length, Weight, DDT
 ```{r}
 ddt<- read.csv("DDT.csv")
 summary(ddt)
+
+with(ddt, ddt[RIVER == "SCM" & DDT > 4.0,])
 ```
 c. Number of species in DDT dataset: 
+
+## Clicker Questions
+
+## Task 4
+```{r}
+tab = table(ddt$RIVER)
+print(tab)
+
+barplot(tab, col=1:4)
+```
+
 
 
 
