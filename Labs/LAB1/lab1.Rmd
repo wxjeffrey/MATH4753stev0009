@@ -27,33 +27,170 @@ getwd()
 ddt <- read.csv("DDT.csv")
 head(ddt)
 ```
+
 ## Task 3
+
 ```{r}
 ddt <- read.csv("DDT.csv")
 names(ddt)
 ```
-a. Qualitative Variables: River, Species
-b. Quantitative Variables: Mile, Length, Weight, DDT
+
+1. Qualitative Variables: River, Species
+
+2. Quantitative Variables: Mile, Length, Weight, DDT
 
 ```{r}
-ddt<- read.csv("DDT.csv")
+ddt <- read.csv("DDT.csv")
 summary(ddt)
+```
 
+3. Number of species in DDT dataset: 3 
+
+4. 
+```{r}
+with(ddt, ddt[SPECIES == "LMBASS" & WEIGHT > 800,])
+```
+
+5.
+```{r}
 with(ddt, ddt[RIVER == "SCM" & DDT > 4.0,])
 ```
-c. Number of species in DDT dataset: 
 
 ## Clicker Questions
 
+Q1. Mean length of fish: 42.8125
+
+```{r}
+c(mean(ddt$LENGTH))
+```
+
+Q2. Standard Deviation of weight of fish: 376.5461
+
+```{r}
+c(sd(ddt$WEIGHT))
+```
+
+Q3. Is this the plot of LENGTH vs WEIGHT from the ddt data frame? 0 (No)
+
+```{r}
+with(ddt,plot(WEIGHT,LENGTH))
+```
+
+Q4. If v=1:20 what is the last value of v/20? 1
+
+```{r}
+v=1:20
+v/20
+```
+
 ## Task 4
+
+1. Table of Rivers
+
 ```{r}
 tab = table(ddt$RIVER)
 print(tab)
+```
 
+2. Color Coded Barplot of Rivers
+
+```{r}
 barplot(tab, col=1:4)
 ```
 
+3. Table of Rivers Crossed with Fish Species
 
+```{r}
+spriv=with(ddt,table(RIVER,SPECIES))
+spriv
+```
+
+4. Barplot of Rivers Crossed with Fish Species
+```{r}
+barplot(spriv,beside=TRUE,col=1:4)
+```
+
+## Task 5
+
+1. Pie Chart of Fish Species
+
+```{r}
+sp=with(ddt,table(SPECIES))
+pie(sp,col=1:3)
+```
+
+2. Pie Chart of Rivers
+
+```{r}
+rv=with(ddt,table(RIVER))
+pie(rv,col=1:4)
+```
+
+## Task 6
+
+1. Boxplot of Variable DDT
+
+```{r}
+layout(matrix(c(1,2,3),nr=1,nc=3))# 1 row 3 cols
+#layout.show(3)
+with(ddt,boxplot(DDT,ylab="DDT",col="Blue",notch=TRUE))
+```
+
+2. Boxplot of Variable WEIGHT
+
+```{r}
+layout(matrix(c(1,2,3),nr=1,nc=3))# 1 row 3 cols
+#layout.show(3)
+with(ddt,boxplot(WEIGHT,ylab="WEIGHT",col="Red",notch=TRUE))
+```
+
+3. Boxplot of Variable LENGTH
+
+```{r}
+layout(matrix(c(1,2,3),nr=1,nc=3))# 1 row 3 cols
+#layout.show(3)
+with(ddt,boxplot(LENGTH,ylab="LENGTH",col="Green",notch=TRUE))
+```
+
+## Task 7
+
+1. Coplot of LENGTH vs WEIGHT given RIVER
+
+```{r}
+rivcol=with(ddt, ifelse(RIVER=="FCM","Red",
+                        ifelse(RIVER=="LCM","Blue",
+                               ifelse(RIVER=="SCM","Green","Black"))))
+coplot(LENGTH~WEIGHT|RIVER,data=ddt, col=rivcol)
+```
+
+2. Coplot of DDT vs WEIGHT given SPECIES
+
+```{r}
+fishcol=with(ddt,ifelse(SPECIES=="CCATFISH","Red",
+                        ifelse(SPECIES=="SMBUFFALO","Blue","Green")))
+coplot(DDT~WEIGHT|SPECIES,data=ddt, col=fishcol)
+```
+
+## Task 8
+
+```{r}
+library(ggplot2)
+g = ggplot(ddt, aes(x=SPECIES, y= WEIGHT, fill = RIVER) )
+g = g + geom_boxplot() + ggtitle("Jeffrey Stevenson") + coord_equal(3/c(max(ddt$WEIGHT)))
+g
+```
+
+```{r}
+g = ggplot(ddt, aes(x=RIVER, y= LENGTH, fill = SPECIES) )
+g = g + geom_violin() + ggtitle("Jeffrey Stevenson") + coord_equal(6/c(max(ddt$LENGTH)))
+g
+```
+
+```{r}
+g = ggplot(ddt, aes(x=WEIGHT, y= LENGTH, color = SPECIES) )
+g = g + geom_point() + ggtitle("Jeffrey Stevenson") + coord_equal((c(max(ddt$WEIGHT))+1000)/c(max(ddt$LENGTH)))
+g
+```
 
 
 
