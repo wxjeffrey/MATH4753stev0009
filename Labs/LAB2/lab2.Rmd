@@ -31,25 +31,28 @@ head(EPAGAS)
 
 ```{r}
 mpg <- EPAGAS$MPG
+```
+
+```{r}
 z <- (mpg-mean(mpg))/sd(mpg)
 print(paste0("mean = ", round(mean(z), 4)), quote = 'FALSE')
 print(paste0("variance = ", var(z)), quote = 'FALSE')
 print(paste0("standard deviation = ", sd(z)), quote = 'FALSE')
 ```
 
-Possible Outliers
+Possible Outliers:
 
 ```{r}
 mpg[abs(z)>=2 & abs(z)<=3]
 ```
 
-Definite Outliers
+Definite Outliers:
 
 ```{r}
 mpg[abs(z)>3]
 ```
 
-Plot
+Dotplot
 
 ```{r}
 library(lattice)
@@ -60,13 +63,13 @@ dotplot(mpg, col = mycol)
 
 ## Task 4
 
-Boxplot
+1. Boxplot
 
 ```{r}
 boxplot(mpg, notch = TRUE, horizontal = TRUE, col = 'black', main='MPG Boxplot')
 ```
 
-Proportion of data within 2 standard deviations of the mean of the mpg data
+2. Proportion of data within 2 standard deviations of the mean of the mpg data:
 
 ```{r}
 k = 2
@@ -74,14 +77,30 @@ prop = 1-(1/k^2)
 prop
 ```
 
-Exact proportion within 2 standard deviation of the mean
+3. Exact proportion within 2 standard deviation of the mean:
 
 ```{r}
 prop1 = length(mpg[abs(z)<=2])/length(mpg)
 prop1
 ```
 
-According to Chebysev's theorem, at least 75% of the data lies within 2 standard deviations of the mean. This agrees with the data, with 96% of the data lying withing 2 standard deviations of the mean.
+4. According to Chebysev's theorem, at least 75% of the data lies within 2 standard deviations of the mean. This agrees with the data,    with 96% of the data lying withing 2 standard deviations of the mean.
+
+5. What proportion (according to the rule) of the data should be within 2 standard deviations of the mean?
+
+  95% of data should be within 2 standard deviations of the mean.
+
+6. How well does it correspond?
+
+  It corresponds well (as calculated above, 96% of the data lies within 2 standard deviations of the mean).
+
+7. Is the Empirical rule valid in this case? Why?
+
+```{r}
+histogram(mpg, main = 'MPG Histogram')
+```
+
+  The Emiprical rule is not valid in this case. In order for it to be valid, the data has to be symmetric about the mean and unimodal.    This data is not symmetric about the mean. 
 
 
 
