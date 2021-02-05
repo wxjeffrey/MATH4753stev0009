@@ -1,30 +1,94 @@
 ---
-title: "lab2"
+title: "Lab 2"
 author: "Jeffrey Stevenson"
-date: "1/26/2021"
-output: html_document
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Tasks
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Task 1
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+getwd()
 ```
 
-## Including Plots
+## Task 2
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+EPAGAS <- read.csv("EPAGAS.csv")
+head(EPAGAS)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Task 3
+
+```{r}
+mpg <- EPAGAS$MPG
+z <- (mpg-mean(mpg))/sd(mpg)
+print(paste0("mean = ", round(mean(z), 4)), quote = 'FALSE')
+print(paste0("variance = ", var(z)), quote = 'FALSE')
+print(paste0("standard deviation = ", sd(z)), quote = 'FALSE')
+```
+
+Possible Outliers
+
+```{r}
+mpg[abs(z)>=2 & abs(z)<=3]
+```
+
+Definite Outliers
+
+```{r}
+mpg[abs(z)>3]
+```
+
+Plot
+
+```{r}
+library(lattice)
+mycol = ifelse(abs(z)>3, "Red",
+        ifelse(abs(z)>=2 & abs(z)<=3,"Blue", "Black"))  
+dotplot(mpg, col = mycol)
+```
+
+## Task 4
+
+Boxplot
+
+```{r}
+boxplot(mpg, notch = TRUE, horizontal = TRUE, col = 'black', main='MPG Boxplot')
+```
+
+Proportion of data within 2 standard deviations of the mean of the mpg data
+
+```{r}
+k = 2
+prop = 1-(1/k^2)
+prop
+```
+
+Exact proportion within 2 standard deviation of the mean
+
+```{r}
+prop1 = length(mpg[abs(z)<=2])/length(mpg)
+prop1
+```
+
+According to Chebysev's theorem, at least 75% of the data lies within 2 standard deviations of the mean. This agrees with the data, with 96% of the data lying withing 2 standard deviations of the mean.
+
+
+
+
+
+
+
+
+
+
