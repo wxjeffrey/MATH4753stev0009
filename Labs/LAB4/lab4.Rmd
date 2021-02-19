@@ -1,0 +1,324 @@
+---
+title: "Lab 4"
+author: "Jeffrey Stevenson"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks
+
+## Task 1
+
+```{r}
+getwd()
+```
+
+## Task 2
+
+```{r}
+spruce.df = read.csv("SPRUCE.csv")
+tail(spruce.df)
+```
+
+## Task 3
+
+```{r}
+library(s20x)
+trendscatter(Height~BHDiameter,f=0.5,data=spruce.df)
+
+spruce.lm=with(spruce.df,lm(Height~BHDiameter))
+
+height.res = residuals(spruce.lm)
+
+height.fit = fitted(spruce.lm)
+
+plot(height.fit,height.res)
+
+trendscatter(height.fit,height.res)
+```
+
+**What shape is seen in the plot?**
+
+The Residual vs. Fitted values plot shows a downward-facing parabola. Compared to the decreasingly positive-sloping Height vs. BHDiameter plot, it is clear
+that this data does not fit a linear model well. 
+
+**Residual plot using plot() function**
+
+```{r}
+plot(spruce.lm, which=1)
+```
+
+**Check normality**
+
+```{r}
+normcheck(spruce.lm,shapiro.wilk = TRUE)
+```
+
+**What is pvalue for Shapiro-Wilk test? What is NULL hypothesis in this case?**
+
+The p-value is 0.29. Using an alpha value of 0.05, the NULL hypothesis (probability distribution of response y is normal) can be accepted. 
+
+**Are residuals approximately normal in distribution with mean 0 and constant variance?**
+
+```{r}
+round(mean(height.res),6)
+```
+
+**Conclusions**
+
+Considering that the data is normally distrubuted, and looking at the residuals vs. fitted values plot above, a straight line should not be applied to this data set. 
+
+## Task 4
+
+**Fit quadratic model to points**
+
+```{r}
+quad.lm = lm(Height~BHDiameter + I(BHDiameter^2), data=spruce.df)
+```
+
+**Height vs. BHDiameter with quadratic curve**
+
+```{r}
+plot(Height~BHDiameter,bg="Blue",pch=21,cex=1.2,
+ylim=c(0,max(Height)),xlim=c(0,max(BHDiameter)), 
+main="Spruce height prediction",data=spruce.df)
+
+myplot=function(x){
+ quad.lm$coeff[1] + quad.lm$coeff[2]*x + quad.lm$coeff[3]*x^2
+}
+curve(myplot, lwd=2, col="steelblue", add=TRUE)
+```
+
+**Make quad.fit**
+
+```{r}
+quad.fit = fitted(quad.lm)
+```
+
+**Make plot of residuals vs. fitted values**
+
+```{r}
+plot(quad.lm, which = 1)
+```
+
+**Construct QQ plot**
+
+```{r}
+normcheck(quad.lm, shapiro.wilk = TRUE)
+```
+
+**What is p-value? What do you conclude?**
+
+The p-value is 0.684. Compared to an alpha of 0.05, the p-value is much greater. This means that we can accept the null hypothesis
+that the data is normally distributed. The trendline in the residuals vs. fitted values plots indicated that this model fits well 
+due to the trend line staying around 0 for the residual values.
+
+## Task 5
+
+**Summarize quad.lm**
+
+```{r}
+summary(quad.lm)
+```
+
+**Value of Bo, B1, and B2?**
+
+$\hat{B_0} = 0.860896$
+$\hat{B_1} = 1.469592$
+$\hat{B_2} = -0.027457$
+
+**Interval Estimates**
+
+```{r}
+ciReg(quad.lm)
+```
+
+**Equation of fitted line**
+
+$\hat{B_0}+\hat{B_1}x+\hat{B_2}x^2=0.860896+1.469592x-0.027457x^2$
+
+**Predict spruce height when diamter is 15, 18, and 20cm**
+
+```{r}
+predict(quad.lm, data.frame(BHDiameter=c(15,18,20)))
+
+predict(spruce.lm, data.frame(BHDiameter=c(15,18,20)))
+```
+
+**Compare with previous predictions**
+
+Overall, the quadratic predictions are greater than the linear predictions.
+
+**Value of multiple $r^2$? Compare with previous model.**
+
+```{r}
+summary(quad.lm)$r.squared
+summary(spruce.lm)$r.squared
+```
+
+The quadratic $r^2$ is 0.7741266, which is higher than the linear $r^2$ of 0.6569146. 
+
+**Adjusted $r^2$**
+
+```{r}
+summary(quad.lm)$adj.r.squared
+summary(spruce.lm)$adj.r.squared
+```
+
+The adjusted $r^2$ for the quadratic model is 0.7604373. The adjusted $r^2$ for the linear model is 0.6468239.
+This means that the quadratic equation is a better fit because the value is closer to 1. 
+
+**What does "Multiple $r^2$" mean in this case?**
+
+Multiple $r^2$ shows how well the model represents the data. 
+
+**Which model explains the most variability in height?**
+
+```{r}
+anova(quad.lm)
+anova(spruce.lm)
+```
+
+The residual sum of squares for the quadratic model is less than that of the linear model, so 
+the quadratic model fits the data better.
+
+**TSS, MSS, RSS, and MSS/TSS**
+
+```{r}
+height.qfit=fitted(quad.lm)
+
+RSS=with(spruce.df, sum((Height-height.qfit)^2))
+RSS
+
+MSS = with(spruce.df, sum((height.qfit-mean(Height))^2))
+MSS
+
+TSS = with(spruce.df, sum((Height-mean(Height))^2))
+TSS
+
+MSS/TSS
+```
+
+## Task 6
+
+**Cook's plot**
+
+```{r}
+cooks20x(quad.lm)
+```
+
+The cooks distance is a measure of the influence a data point has on the regression model. 
+This is typically used to identify outliers that negatively affect the regression model. 
+
+**What does cooks distance for the quadratic model and data tell you?**
+
+The cooks distance for this data and quadratic model shows that points 18, 21, and 24 are likely outliers
+because of the influence they have on the model. 
+
+**quad2.lm and summary**
+
+```{r}
+quad2.lm = lm(Height~BHDiameter + I(BHDiameter^2), data=spruce.df[-24,])
+summary(quad2.lm)
+```
+
+**Compare with quad.lm**
+
+```{r}
+summary(quad.lm)
+```
+
+The multiple and adjusted $r^2$ values are larger for quad2.lm. The magnitude of the residuals are less 
+for quad2.lm.
+
+**Conclude**
+
+Removing the outlier pointed out in the cooks plot significantly helped the quadratic model fit the data better.
+
+## Task 7
+
+**Proof**
+
+First, we show 2 lines with point $x_k$ in common.
+ $$l_1: y = B_0+B_1 x $$
+$$l_2: y = B_0+\delta+(B_1+B_2)x $$
+Next, we plug in $x_k$ and set the equations equal to each other because they share the same point.
+ 
+$$ y_k=B_0+B_1x_k =B_0+\delta+(B_1+B_2)x_k $$
+Next, redistribute the RHS.
+$$ B_0+B_1x_k =B_0+\delta+B_1x_k+B_2x_k $$
+$B_0$ and $B_1x_k$ cancel, leaving us with:
+
+$$ 0=\delta+B_2x_k $$
+Rearranged: 
+$$\delta=-B_2x_k$$
+
+Going back to $l_2$ for any $x$:
+$$l_2: y = B_0+\delta+(B_1+B_2)x $$
+Substitute $\delta=-B_2x_k$ into the equation:
+$$l_2: y = B_0-B_2x_k+(B_1+B_2)x $$
+Which can be rearranged to:
+$$l_2: y = B_0+B_1x+B_2(x-x_k) $$
+Now we have an equation that describes $l_2$ as an adjustment of $l_1$. 
+We can use an indicator function $I(x>x_k)$ to allow our function to know where it should and should not include the adjustment. 
+$$y = B_0+B_1x+B_2(x-x_k)I(x>x_k) $$
+Where I() is 1 if $x>x_k$ and 0 else. 
+
+**Reproduce Plot**
+
+```{r}
+sp2.df=within(spruce.df, X<-(BHDiameter-18)*(BHDiameter>18)) 
+lmp=lm(Height~BHDiameter + X,data=sp2.df)
+tmp=summary(lmp)
+myf = function(x,coef){
+  coef[1]+coef[2]*(x) + coef[3]*(x-18)*(x-18>0)
+}
+plot(spruce.df,main="Piecewise regression")
+curve(myf(x,coef=tmp$coefficients[,"Estimate"] ),add=TRUE, lwd=2,col="Blue")
+abline(v=18)
+text(18,16,paste("R squared=",round(tmp$r.squared,4) ))
+```
+
+## Task 8
+
+Takes a quantitative vector and returns a plot. This plot is produced according to the function.
+```{r}
+library(MATH4753stev0009)
+myplot(1:40)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
