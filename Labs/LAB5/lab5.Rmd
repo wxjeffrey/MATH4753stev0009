@@ -1,0 +1,178 @@
+---
+title: "Lab 5"
+author: "Jeffrey Stevenson"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks
+
+## Task 1
+
+```{r}
+getwd()
+```
+
+## Task 2
+
+**100 Iterations**
+
+```{r}
+library(MATH4753stev0009)
+mybin(iter = 100, n = 10, p = 0.7)
+```
+
+**200 Iterations**
+
+```{r}
+mybin(iter = 200, n = 10, p = 0.7)
+```
+
+**500 Iterations**
+
+```{r}
+mybin(iter = 500, n = 10, p = 0.7)
+```
+
+**1000 Iterations**
+
+```{r}
+mybin(iter = 1000, n = 10, p = 0.7)
+```
+
+**10000 Iterations**
+
+```{r}
+mybin(iter = 10000, n = 10, p = 0.7)
+```
+
+
+
+**Verification**
+
+```{r}
+dbinom(0:10,10,0.7)
+```
+The dbinom() function and the 10000 binomial iterations above are fairly close, so I would say they agree.
+
+## Task 3
+
+**Sample without replacement**
+
+```{r}
+sample(20,5,replace=FALSE)
+```
+
+**Sample with replacement**
+
+```{r}
+sample(20,5,replace=TRUE)
+```
+
+**Hypergeometric: 100 Iterations**
+
+```{r}
+myhyper(iter = 100, n = 5, r = 12, N = 20)
+```
+
+**Hypergeometric: 200 Iterations**
+
+```{r}
+myhyper(iter = 200, n = 5, r = 12, N = 20)
+```
+
+**Hypergeometric: 500 Iterations**
+
+```{r}
+myhyper(iter = 500, n = 5, r = 12, N = 20)
+```
+
+**Hypergeometric: 1000 Iterations**
+
+```{r}
+myhyper(iter = 1000, n = 5, r = 12, N = 20)
+```
+
+**Hypergeometric: 10000 Iterations**
+
+```{r}
+myhyper(iter = 10000, n = 5, r = 12, N = 20)
+```
+
+**Verification**
+
+```{r}
+dhyper(0:5,12,8,5)
+```
+
+Overall, the hypergeometric simulation and dhyper() agree pretty well.
+
+## Task 4
+
+**Function Description**
+
+This function creates a frequency plot with a given sample size of 10. n elements are drawn with replacement, factoring the amount of times each outcome happens. This is run over a chosen amount of iterations (iter), and the time between loops is given with the variable time.
+
+**Running function**
+
+```{r}
+mysample=function(n, iter,time){
+for( i in 1:iter){
+#make a sample
+s=sample(1:10,n,replace=TRUE)
+#turn the sample into a factor
+sf=factor(s,levels=1:10)
+#make a barplot
+barplot(table(sf)/n,beside=TRUE,col=rainbow(10), 
+main=paste("Example sample()", " iteration ", i, " n= ", n,sep="") ,
+ylim=c(0,0.2)
+)
+#release the table
+Sys.sleep(time)
+}
+}
+mysample(n=1000, iter=1,time=1)
+```
+
+**Plot Description**
+
+Running the function with 30 iterations, the plots look very similar to each other. This makes sense, because with random probabilities, the plots should be very similar. On each plot, the bars are all similar heights.
+
+## Task 5
+
+**Calculations**
+
+```{r}
+#Problem 1
+choose(8,4)
+#Problem 2
+1-ppois(lambda = 2, q = 4)
+#Problem 3
+mynbin(y=10,r=3,p=0.4)
+#Problem 4
+pbinom(8,15,0.4)
+```
+
+## Task 6
+
+```{r}
+MATH4753stev0009::myf(4)
+```
+ 
+
+
+
+
+
+
+
+
+
+
