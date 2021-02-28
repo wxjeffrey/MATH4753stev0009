@@ -1,6 +1,6 @@
 ---
 title: "Project 1"
-author: "Dr. Wayne Stewart"
+author: "Jeffrey Stevenson"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -31,7 +31,7 @@ abstract: This project is all about analysing the SWDEFECTS file using R and pro
 
 <center>
 
-![Dr. Wayne Stewart](wayne.jpg "My Picture"){ width=20% }
+![Jeffrey Stevenson](jeffrey.jpeg "My Picture"){ width=20% }
 
 </center>
 
@@ -50,67 +50,54 @@ This data file contains 498 modules of software code written in C for NASA space
 
 ## Summary Table 
 
-Create the summary table (TABLE SIA3.2) found on page 125. You can use RMD code to do it -- see MARKDOWN QUICK REFERENCE in Rstudio help.
+```{r echo = FALSE, results = 'asis'}
+sumtable <- matrix(c(" ","False","True","No","_a_","_b_","Yes","_c_","_d_"," "," "," "),nrow = 4, ncol=3,byrow=TRUE)
+colnames(sumtable) <- c(" ","_Module_ _Has_ _Defects_","_Module_ _Has_ _Defects_")
+rownames(sumtable) <- c(" ","_Algorithm_","_Predicts_","_Defects_")
+sumtable <- as.table(sumtable)
 
-### Example RMD to make a table
+library(knitr)
+kable(sumtable, caption = "__Summary Table for Evaluating Defect Prediction Algorithms__")
 ```
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
-```
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
+
 
 ### Make formulae 
 
-Using $\LaTeX$ construct the formulae for 
+1. Accuracy: $P(Algorithm \ is \ correct) = \frac{a+d}{a+b+c+d}$
 
-1. Accuracy
-2. Detection rate
-3. False alarm rate
-4. Precision
+2. Detection Rate: $P(predict \ defect| module \  has \ defect) = \frac{d}{b+d}$
 
-Latex Example: See (http://www.stat.cmu.edu/~cshalizi/rmarkdown/#elements-of-math-mode)
+3. False Alarm Rate: $P(predict \ defect| module \  has \ no \ defect) = \frac{c}{a+c}$
 
-$$
-\begin{eqnarray}
-P(|X-\mu| > k) & = & P(|X-\mu|^2 > k^2)\\
-& \leq & \frac{\mathbb{E}\left[|X-\mu|^2\right]}{k^2}\\
-& \leq & \frac{\mathrm{Var}[X]}{k^2}
-\end{eqnarray}
-$$
+4. Precision: $P(module \ has \ defect |predict \ defect) = \frac{d}{c+d}$
 
 # R functions
-Using the above definitions make R functions that will create the required probabilities, please remove `eval=FALSE` when creating the functions :
 
-```{r accuracy, eval=FALSE}
+```{r accuracy}
 acc=function(a,b,c,d)
 {
-  
+  (a+d)/(a+b+c+d)
 }
 ```
 
-```{r detecton, eval=FALSE}
+```{r detecton}
 detect=function(b,d)
 {
-  
+  (d)/(b+d)
 }
 ```
 
-```{r alarm, eval=FALSE}
+```{r alarm}
 falarm=function(a,c)
 {
-  
+  (c)/(a+c)
 }
 ```
 
-```{r precision, eval=FALSE}
+```{r precision}
 prec=function(c,d)
 {
-  
+  (d)/(c+d)
 }
 ```
 
@@ -131,7 +118,42 @@ tab2=addmargins(tab)
 tab2
 ```
 
-
+```{r }
+#read data
+swd=read.csv("SWDEFECTS.csv")
+#check that data is correctly imputed
+head(swd)
+# getting the data for loc50 and creating the margings of it
+loc50=with(swd, table(predict.loc.50,defect))
+loc50.1=addmargins(loc50)
+# getting the data for EVG and creating the margings of it
+EVG=with(swd, table(predict.evg.14.5,defect))
+EVG.1=addmargins(EVG)
+# getting the data for IVG and creating the margings of it
+IVG=with(swd, table(predict.ivg.9.2,defect))
+IVG.1=addmargins(IVG)
+# getting the data for VG and creating the margings of it
+VG=with(swd, table(predict.vg.10,defect))
+VG.1=addmargins(VG)
+# Printing the tables with margins
+#loc50
+loc50.1
+#VG
+VG.1
+#EVG
+EVG.1
+#IVG
+IVG.1
+#Creating barplots for tables without margin
+#loc50
+barplot(loc50, beside=TRUE, leg=TRUE)
+#EVG
+barplot(EVG, beside=TRUE, leg=TRUE)
+#IVG
+barplot(IVG, beside=TRUE, leg=TRUE)
+#VG
+barplot(VG, beside=TRUE, leg=TRUE)
+```
 
 
 
@@ -156,5 +178,5 @@ The function will need to create two things
     2. Commandline output in the form of a list containing the table
     
     
-![](barplot.png){ width=70% }
+![](jeffrey.jpeg){ width=70% }
 
